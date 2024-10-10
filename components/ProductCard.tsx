@@ -11,7 +11,7 @@ const ProductCard = async ({ data }: any) => {
       <Link href={`/product/${data._id}`}>
         <div className="shadow-lg w-fit p-4 rounded-md relative flex gap-3 flex-col">
           <Image
-            src={`/download${Math.floor(Math.random() * 3) + 1}.jpeg`}
+            src={`/download${Math.floor(Math.random() * 3) + 1 || "3"}.jpeg`}
             alt={data?.description || "No Description"}
             height={200}
             width={400}

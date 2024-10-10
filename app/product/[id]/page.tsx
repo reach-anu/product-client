@@ -11,7 +11,9 @@ const page = async ({ params }: any) => {
     <div className="relative my-5">
       <div className="shadow-lg p-4 rounded-md relative flex gap-10 flex-wrap">
         <Image
-          src="/download.jpeg"
+          src={`/download${
+            Math.floor(Math.random() * 3) + 1 || "3"
+          }.jpeg`}
           alt="car"
           height={700}
           width={500}

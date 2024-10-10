@@ -5,19 +5,26 @@ import Modal from "./Modal";
 import { deleteProduct } from "@/utils/action";
 import toast from "react-hot-toast";
 import AddProduct from "./AddProduct";
+import Loader from "./Loader";
+import { useRouter } from "next/navigation";
 
 const Options = ({ data }: any) => {
   const [showMenu, setShowMenu] = useState(false);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleDelete = async () => {
     setShowMenu(false);
+    setLoading(true);
     const response = await deleteProduct(data._id);
+    setLoading(false);
     if (response?.error) {
       return toast.error(response?.error);
     }
     toast.success("Product deleted successfully");
+    router.push("/");
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -73,6 +80,7 @@ const Options = ({ data }: any) => {
       <Modal open={open} setOpen={setOpen}>
         <AddProduct open={open} setOpen={setOpen} initialData={data} />
       </Modal>
+      <Loader loading={loading} />
     </div>
   );
 };

@@ -3,14 +3,15 @@ import { login, signup } from "@/utils/action";
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import Loader from "./Loader";
 interface AuthProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-const Auth: React.FC<AuthProps> = ({  setOpen }) => {
+const Auth: React.FC<AuthProps> = ({ setOpen }) => {
   const [option, setOption] = useState("login");
-  
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({
     name: "",
     email: "",
@@ -29,10 +30,22 @@ const Auth: React.FC<AuthProps> = ({  setOpen }) => {
     e.preventDefault();
     let response;
     if (option == "login") {
+      if (!data.email || !data.password) {
+        return toast.error("All fields are required");
+      }
+      setLoading(true);
       response = await login(data);
     } else {
+      if (!data.email || !data.password || !data.name) {
+        return toast.error("All fields are required");
+      }
+      if (data.password.length < 6) {
+        return toast.error("Password should be of min 6 character");
+      }
+      setLoading(true);
       response = await signup(data);
     }
+    setLoading(false);
     if (response?.error) {
       return toast.error(response?.error);
     }
@@ -108,6 +121,7 @@ const Auth: React.FC<AuthProps> = ({  setOpen }) => {
           <span>{option === "login" ? "Login" : "Sign up"}</span>
         </button>
       </form>
+      <Loader loading={loading} />
     </div>
   );
 };

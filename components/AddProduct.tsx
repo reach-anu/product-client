@@ -2,6 +2,7 @@
 import { addProduct, updateProduct } from "@/utils/action";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Loader from "./Loader";
 interface AuthProps {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -20,6 +21,7 @@ const AddProduct: React.FC<AuthProps> = ({ setOpen, initialData }) => {
     description: "",
     stock: null,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -37,12 +39,24 @@ const AddProduct: React.FC<AuthProps> = ({ setOpen, initialData }) => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (
+      !data.name ||
+      !data.price ||
+      !data.description ||
+      !data.stock ||
+      data.price <= 0 ||
+      data.price <= 0
+    ) {
+      return toast.error("Enter valid value for all fields");
+    }
     let response;
+    setLoading(true);
     if (initialData) {
       response = await updateProduct(initialData._id, data);
     } else {
       response = await addProduct(data);
     }
+    setLoading(false);
 
     if (response?.error) {
       return toast.error(response?.error);
@@ -56,9 +70,9 @@ const AddProduct: React.FC<AuthProps> = ({ setOpen, initialData }) => {
     setOpen(false);
     setData({
       name: "",
-      price: 0,
+      price: null,
       description: "",
-      stock: 0,
+      stock: null,
     });
   };
 
@@ -105,6 +119,7 @@ const AddProduct: React.FC<AuthProps> = ({ setOpen, initialData }) => {
           {initialData ? "Update" : "Add"}
         </button>
       </form>
+      <Loader loading={loading} />
     </div>
   );
 };
